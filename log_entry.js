@@ -1,9 +1,11 @@
 import React, { Component } from 'react';
-import { Button,
-         Text,
-         TextInput,
-         View,
-       } from 'react-native';
+import {
+  AsyncStorage,
+  Button,
+  Text,
+  TextInput,
+  View,
+} from 'react-native';
 import DatePicker from 'react-native-datepicker'
 
 export class LogEntry extends Component {
@@ -14,10 +16,7 @@ export class LogEntry extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      date: '',
-      odometer: '',
-      volume: '',
-      price: '',
+      date: new Date()
     }
   }
 
@@ -28,8 +27,9 @@ export class LogEntry extends Component {
         <Text>Date</Text>
         <DatePicker
           date={this.state.date}
-          onDateChange={(date) => {this.setState({date: date})}}
-
+          onDateChange={(date) => {
+            this.setState({date: date})
+          }}
         />
 
 
@@ -37,31 +37,54 @@ export class LogEntry extends Component {
         <TextInput
           value={this.state.odometer}
           keyboardType='numeric'
-          onChange={(odometer) => {this.setState({odometer: odometer})}}
+          onChangeText={(odometer) => {this.setState({odometer: odometer})}}
         />
 
         <Text>Volume (gal)</Text>
         <TextInput
           value={this.state.volume}
           keyboardType='numeric'
-          onChange={(volume) => {this.setState({volume: volume})}}
+          onChangeText={(volume) => {this.setState({volume: volume})}}
         />
 
         <Text>Price ($/gal)</Text>
         <TextInput
           value={this.state.price}
           keyboardType='numeric'
-          onChange={(price) => {this.setState({price: price})}}
+          onChangeText={(price) => {this.setState({price: price})}}
         />
 
         <Button
           title='Save log entry'
           onPress={() => {
-            console.log('xxxx FAKING IT xxxxx saving log entry to AsyncStorage');
+            this._saveData()
             navigate('History')
           }}
         />
       </View>
     )
+  }
+
+  _formattedDate() {
+    let date = this.state.date
+    if (typeof date == 'string') { return date }
+
+    let day = date.getDate()
+    if (day < 10) { day = '0'+day }
+    let month = date.getMonth() + 1
+    let year = date.getFullYear()
+    return [month, day, year].join('/')
+  }
+
+  _saveData() {
+    key = this.state.odometer
+    value = [
+      this._formattedDate(),
+      this.state.volume,
+      this.state.price,
+      this.state.odometer,
+      'F'
+    ].join(',')
+    AsyncStorage.setItem(key, value)
   }
 }
