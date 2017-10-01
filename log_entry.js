@@ -7,6 +7,10 @@ import { Button,
 import DatePicker from 'react-native-datepicker'
 
 export class LogEntry extends Component {
+  static navigationOptions = {
+    title: 'Log Entry'
+  }
+
   constructor(props) {
     super(props);
     this.state = {
@@ -16,7 +20,9 @@ export class LogEntry extends Component {
       price: '',
     }
   }
+
   render() {
+    const { navigate } = this.props.navigation;
     return(
       <View>
         <Text>Date</Text>
@@ -50,7 +56,10 @@ export class LogEntry extends Component {
 
         <Button
           title='Save log entry'
-          onPress={() => console.log('xxxx FAKING IT xxxxx saving log entry to AsyncStorage')}
+          onPress={() => {
+            console.log('xxxx FAKING IT xxxxx saving log entry to AsyncStorage');
+            navigate('History')
+          }}
         />
       </View>
     )
